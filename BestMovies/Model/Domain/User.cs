@@ -11,29 +11,29 @@ namespace BestMovies.Model.Domain
         {
         }
 
-        public User(string email, string passWord, List<Movie> favMoviesID)
+        public User(string email, string passWord, List<int> favMoviesIDs)
         {
             Email = email;
             PassWord = passWord;
-            FavMoviesID = favMoviesID;
+            FavMoviesIDs = favMoviesIDs;
         }
 
         private String Email { get; set; }
         private String PassWord { get; set; }
 
-        private List<Movie> FavMoviesID { get; set; }
+        private List<int> FavMoviesIDs { get; set; }
 
         public override bool Equals(object obj)
         {
             return obj is User user &&
                    Email == user.Email &&
                    PassWord == user.PassWord &&
-                   EqualityComparer<List<Movie>>.Default.Equals(FavMoviesID, user.FavMoviesID);
+                   EqualityComparer<List<int>>.Default.Equals(FavMoviesIDs, user.FavMoviesIDs);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Email, PassWord, FavMoviesID);
+            return HashCode.Combine(Email, PassWord, FavMoviesIDs);
         }
     }
 }
