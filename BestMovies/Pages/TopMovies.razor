@@ -1,0 +1,51 @@
+﻿@page "/sortedmovies"
+@using BestMovies.Model.Domain
+@inject IDataLayer DataLayer
+
+
+<h2>View sorted Movies here</h2>
+
+<button class="btn btn-primary" @onclick="Update">Update List</button>
+
+@if (items == null || !items.Any())
+{
+	<p>Nothing to see here</p>
+}
+else
+{
+<table class="table" style="width:240px">
+	<tbody>
+		@for (var z = 0; z < items.Count; z++)
+		{
+			@if (z % 5 == 0)
+			{
+				<tr>
+				</tr>
+			}
+		<td width="33%">
+		<td width="33%">
+			<a href=@($"/products/{items[z].id}") asp-route-id="@items[z].id"><img src="@items[z].GetPoster()" height="300" /></a>
+		</td>
+		@items[z].rating.rating/10 ★
+		</td>
+		<td width="33%"><a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">@items[z].title</a></td>
+	}
+		</tbody>
+	</table>
+	}
+
+
+@code {
+
+	private IList<Movie> items
+	{ get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		items = await DataLayer.Top100("top");
+	}
+
+	private async Task Update()
+	{
+		items = await DataLayer.Top100("bot");
+	}
+}

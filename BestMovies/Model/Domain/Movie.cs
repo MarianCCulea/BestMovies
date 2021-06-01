@@ -32,6 +32,14 @@ namespace BestMovies.Model.Domain
         public List<Star> stars { get; set; }
         public string poster { get; set; }
 
+        public string GetPoster()
+        {
+            if (poster.Equals("N/A")){
+                return "https://cdn.discordapp.com/attachments/819280914319933510/849390722502885386/matrix_the_1999_3133_poster.png";
+            }
+            return poster;
+        }
+
         public override bool Equals(object obj)
         {
             return obj is Movie movie &&
