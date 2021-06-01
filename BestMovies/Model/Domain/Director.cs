@@ -7,28 +7,28 @@ namespace BestMovies.Model.Domain
 {
     public class Director
     {
-        public Director(int dirID, string dirName, int dirDay)
+        public Director(int id, string name, int birth)
         {
-            this.dirID = dirID;
-            this.dirName = dirName;
-            this.dirDay = dirDay;
+            this.id = id;
+            this.name = name;
+            this.birth = birth;
         }
 
-        private int dirID {get; set;}
-        private String dirName { get; set; }
-        private int dirDay { get; set; }
+        private int id {get; set;}
+        private String name { get; set; }
+        private int birth { get; set; }
 
         public override bool Equals(object obj)
         {
             return obj is Director director &&
-                   dirID == director.dirID &&
-                   dirName == director.dirName &&
-                   dirDay == director.dirDay;
+                   id == director.id &&
+                   name == director.name &&
+                   birth == director.birth;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(dirID, dirName, dirDay);
+            return HashCode.Combine(id, name, birth);
         }
     }
 }

@@ -7,30 +7,30 @@ namespace BestMovies.Model.Domain
 {
     public class Rating
     {
-        public Rating(int rateId, string ratingValue, int ratingVotes)
+        public Rating(int id, string rating, int votes)
         {
-            this.rateId = rateId;
-            this.ratingValue = ratingValue;
-            this.ratingVotes = ratingVotes;
+            this.id = id;
+            this.rating = rating;
+            this.votes = votes;
         }
 
-        private int rateId { get; set; }
+        private int id { get; set; }
 
-        private String ratingValue { get; set; }
+        private string rating { get; set; }
 
-        private int ratingVotes { get; set; }
+        private int votes { get; set; }
 
         public override bool Equals(object obj)
         {
             return obj is Rating rating &&
-                   rateId == rating.rateId &&
-                   ratingValue == rating.ratingValue &&
-                   ratingVotes == rating.ratingVotes;
+                   id == rating.id &&
+                   rating.Equals(rating.rating) &&
+                   votes == rating.votes;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(rateId, ratingValue, ratingVotes);
+            return HashCode.Combine(id, rating, votes);
         }
     }
 }

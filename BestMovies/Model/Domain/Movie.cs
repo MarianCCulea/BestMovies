@@ -11,38 +11,40 @@ namespace BestMovies.Model.Domain
         {
         }
 
-        public Movie(string movieID, string movieTitle, Director director, Rating rating, List<Star> stars)
+        public Movie(int id, string title, Director director, Rating rating, List<Star> stars,string poster)
         {
-            MovieID = movieID;
-            MovieTitle = movieTitle;
-            Director = director;
-            Rating = rating;
-            Stars = stars;
+            this.id = id;
+            this.title = title;
+            this.director = director;
+            this.rating = rating;
+            this.stars = stars;
+            this.poster = poster;
         }
 
-        private String MovieID { get; set; }
+        public int id { get; set; }
 
-        private String MovieTitle { get; set; }
+        public string title { get; set; }
 
-        private Director Director { get; set; }
+        public Director director { get; set; }
 
-        private Rating Rating { get; set; }
+        public Rating rating { get; set; }
 
-        private List<Star> Stars { get; set; }
+        public List<Star> stars { get; set; }
+        public string poster { get; set; }
 
         public override bool Equals(object obj)
         {
             return obj is Movie movie &&
-                   MovieID == movie.MovieID &&
-                   MovieTitle == movie.MovieTitle &&
-                   EqualityComparer<Director>.Default.Equals(Director, movie.Director) &&
-                   EqualityComparer<Rating>.Default.Equals(Rating, movie.Rating) &&
-                   EqualityComparer<List<Star>>.Default.Equals(Stars, movie.Stars);
+                   id == movie.id &&
+                   title == movie.title &&
+                   EqualityComparer<Director>.Default.Equals(director, movie.director) &&
+                   EqualityComparer<Rating>.Default.Equals(rating, movie.rating) &&
+                   EqualityComparer<List<Star>>.Default.Equals(stars, movie.stars);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(MovieID, MovieTitle, Director, Rating, Stars);
+            return HashCode.Combine(id, title, director, rating, stars,poster);
         }
     }
 }

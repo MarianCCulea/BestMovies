@@ -39,7 +39,6 @@ namespace BestMovies.Pages
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
-            Console.WriteLine("ready to get");
         }
 
         public static DataLayer Instance
@@ -101,8 +100,12 @@ namespace BestMovies.Pages
             string uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getTop100?place="+place;
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            movies = JsonConvert.DeserializeObject<List<Movie>>(stream);
-            return movies;
+
+            Console.WriteLine("MIlbea stream"+stream);
+            List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
+            Console.WriteLine("MIlbea poster"+moviez.ToList()[2].poster);
+            Console.WriteLine("MIlbea ttitle" + moviez.ToList()[2].title);
+            return moviez;
         }
 
         public async Task<IList<Movie>> MostVoted(string place)

@@ -1,16 +1,43 @@
 ﻿@page "/counter"
+@using BestMovies.Model.Domain
+@inject IDataLayer DataLayer
 
-<h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<h2>View all products here</h2>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<button class="btn btn-primary">Update List</button>
+
+@if (items == null || !items.Any())
+{
+	<p>Nothing to see here</p>
+}
+else
+{
+	<table class="table" style="width:200px">
+		<tbody>
+			@for (var z = 0; z < items.Count; z++)
+			{
+			
+			<td width="33%">
+				<img src="@items[z].poster" height="300" />
+			</td>
+			<td width="33%">@items[z].title</td>
+				}
+		</tbody>
+		</table>
+	}
+}
 
 @code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
+	private IList<Movie> items
+	{ get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		IList<Movie> unordered = await DataLayer.Top100("top");
+		items = unordered.OrderBy(o => o.id).ToList();
+	}
+
+
 }
