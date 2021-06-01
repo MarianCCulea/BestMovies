@@ -69,15 +69,14 @@ namespace BestMovies.Pages
         }
 
         public IList<Movie> AllItems() => movies;
-        public Movie ItemById(int id) => movies.SingleOrDefault(t => t.id == id);
 
         public async Task<IList<Movie>> RequestAllItems()
         {
             string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies";  //https://movies-app-310106.nw.r.appspot.com/api/movies
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            movies = JsonConvert.DeserializeObject<List<Movie>>(stream);
-            return movies;
+            var moviex = JsonConvert.DeserializeObject<List<Movie>>(stream);
+            return moviex;
         }
 
         public async Task<IList<Movie>> Top100(string place)
@@ -85,10 +84,7 @@ namespace BestMovies.Pages
             string uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getTop100?place="+place;
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            Console.WriteLine("MIlbea stream"+stream);
             List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
-            Console.WriteLine("MIlbea poster"+moviez.ToList()[2].poster);
-            Console.WriteLine("MIlbea ttitle" + moviez.ToList()[2].title);
             return moviez;
         }
 
@@ -116,14 +112,23 @@ namespace BestMovies.Pages
             return moviez;
         }
 
-        Task<Movie> IDataLayer.ItemById(int id)
+        public async Task<Movie> ItemById(int id)
         {
-            throw new NotImplementedException();
+            string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/" + id;
+            var streamTask = client.GetAsync(uri);
+            var stream = await streamTask.Result.Content.ReadAsStringAsync();
+            Movie moviez = JsonConvert.DeserializeObject<Movie>(stream);
+            uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getMoviePoster?title=" + moviez.title;
+            streamTask = client.GetAsync(uri);
+            stream = await streamTask.Result.Content.ReadAsStringAsync();
+            moviez.poster = stream;
+            return moviez;
         }
 
         Task<IList<Movie>> IDataLayer.AllItems()
         {
             throw new NotImplementedException();
         }
+
     }
 }

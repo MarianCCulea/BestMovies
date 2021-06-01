@@ -7,7 +7,7 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Policy = "MustBeUser")]
 
-<h1>Product Page</h1>
+<h1>Detailed View</h1>
 <table class="table" border="0" width="700" height="500" cellspacing="0">
 	<tr>
 		<th width="300" rowspan="3"> <img src="@item.poster" width="300" /> </th>
@@ -24,7 +24,7 @@
 </table>
 
 <button type="button" class="btn btn-danger" @onclick=BackToList>Back</button>
-<button type="button" class="btn btn-info" @onclick=AddToFavourites>Add in cart</button>
+<button type="button" class="btn btn-info" @onclick=AddToFavorites>Add to Favorites</button>
 <span id="resultJson">
 </span>
 
@@ -37,18 +37,16 @@
 
 	protected override void OnInitialized()
 	{
-
 		var movie = DataLayer.ItemById(id);
 		item = movie.Result;
-
 	}
 
 	void BackToList()
 	{
-		NavigationManager.NavigateTo("/movieList");
+		NavigationManager.NavigateTo("/movies");
 	}
 
-	async Task AddToFavourites()
+	async Task AddToFavorites()
 	{
 		if (id > 0)
 		{

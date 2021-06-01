@@ -16,7 +16,7 @@ namespace BestMovies.Model.Domain
 
         private int id { get; set; }
 
-        private string rating { get; set; }
+        public string rating { get; set; }
 
         private int votes { get; set; }
 
