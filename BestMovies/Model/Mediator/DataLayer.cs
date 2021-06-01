@@ -11,6 +11,18 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using BestMovies.Pages;
 using BestMovies.Model.Domain;
+using System.Text;
+
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
+using System.Text;
+using System.Threading.Tasks;
 
 public interface IDataLayer
 {
@@ -57,38 +69,11 @@ namespace BestMovies.Pages
         }
 
         public IList<Movie> AllItems() => movies;
-        public Movie ItemById(int id) => movies.SingleOrDefault();
-        public Movie CloneItem(Movie source) => new Movie
-        {
-        };
+        public Movie ItemById(int id) => movies.SingleOrDefault(t => t.id == id);
 
-        /*
-        public async Task<string> SubmitChangesAsync(Movie item)
-        {
-            var serializer = new DataContractJsonSerializer(typeof(Movie));
-            //JavaScriptSerializer json_serializer = new JavaScriptSerializer();
-            string uri = "https://localhost:8080/items/" + item.id;
-            string jsonString;
-            jsonString = JsonConvert.SerializeObject(item);
-
-            HttpContent content = new StringContent(jsonString);
-            var streamTask = client.PutAsync(uri, content);
-            string result = await streamTask.Result.Content.ReadAsStringAsync();
-            if (result.Equals("true"))
-            {
-                movies = await RequestAllItemsAsync();
-                return "Success";
-            }
-            else
-            {
-                return "Fail";
-            }
-        }
-
-        */
         public async Task<IList<Movie>> RequestAllItems()
         {
-            string uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getTop100";
+            string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies";  //https://movies-app-310106.nw.r.appspot.com/api/movies
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             movies = JsonConvert.DeserializeObject<List<Movie>>(stream);
@@ -100,7 +85,6 @@ namespace BestMovies.Pages
             string uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getTop100?place="+place;
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
-
             Console.WriteLine("MIlbea stream"+stream);
             List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
             Console.WriteLine("MIlbea poster"+moviez.ToList()[2].poster);
@@ -113,8 +97,8 @@ namespace BestMovies.Pages
             string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/" + place+ "-votes/";
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            movies = JsonConvert.DeserializeObject<List<Movie>>(stream);
-            return movies;
+            List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
+            return moviez;
         }
 
         public async Task<IList<Movie>> AllUserFavorites()
@@ -124,11 +108,12 @@ namespace BestMovies.Pages
 
         public async Task<Movie> ItemByName(string name)
         {
-            string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/" + name;
-            var streamTask = client.GetAsync(uri);
-            var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            Movie movie = JsonConvert.DeserializeObject<Movie>(stream);
-            return movie;
+            string jsonString= @"{""name"": """+name+ @"""}";
+            HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var streamTask = client.PostAsync("https://movies-app-310106.nw.r.appspot.com/api/movies/name/", content);
+            string result = await streamTask.Result.Content.ReadAsStringAsync();
+            Movie moviez = JsonConvert.DeserializeObject<Movie>(result);
+            return moviez;
         }
 
         Task<Movie> IDataLayer.ItemById(int id)

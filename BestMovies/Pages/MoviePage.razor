@@ -1,0 +1,62 @@
+﻿@page "/movie/{id:int}"
+@using BestMovies.Model.Domain
+@using BestMovies.Shared
+@using Microsoft.AspNetCore.Components;
+@inject IDataLayer DataLayer
+@inject IJSRuntime jsRuntime
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Policy = "MustBeUser")]
+
+<h1>Product Page</h1>
+<table class="table" border="0" width="700" height="500" cellspacing="0">
+	<tr>
+		<th width="300" rowspan="3"> <img src="@item.poster" width="300" /> </th>
+		<th height="125" width="250">@item.title<br /><hr><br />Category: @item.rating</th>
+
+	</tr>
+	<tr>
+		<th height="250">aSADasgsdr asfasd sfsdf sdaf asdf sdaf sdaghrte dfg dfga<br /><br /><br /><br /><br />asdghdfg redfsgafdg </th>
+	</tr>
+	<tr>
+		<th>@item.stars Items left.<hr>Price @item.director;- </th>
+
+	</tr>
+</table>
+
+<button type="button" class="btn btn-danger" @onclick=BackToList>Back</button>
+<button type="button" class="btn btn-info" @onclick=AddToFavourites>Add in cart</button>
+<span id="resultJson">
+</span>
+
+
+@code {
+	[Parameter]
+	public int id { get; set; }
+
+	Movie item { get; set; }
+
+	protected override void OnInitialized()
+	{
+
+		var movie = DataLayer.ItemById(id);
+		item = movie.Result;
+
+	}
+
+	void BackToList()
+	{
+		NavigationManager.NavigateTo("/movieList");
+	}
+
+	async Task AddToFavourites()
+	{
+		if (id > 0)
+		{
+			//DataLayer.add(item, itemcount);
+			await jsRuntime.InvokeVoidAsync("setElementTextById", "resultJson", "Added to the cart");
+		}
+		else
+			await jsRuntime.InvokeVoidAsync("setElementTextById", "resultJson", "At least 1 item must be added");
+	}
+
+}

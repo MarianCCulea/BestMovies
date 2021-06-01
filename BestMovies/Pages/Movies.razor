@@ -1,0 +1,43 @@
+﻿@page "/movies"
+@using BestMovies.Model.Domain
+@inject IDataLayer DataLayer
+
+
+<h2>View all Movies here</h2>
+
+@if (items == null || !items.Any())
+{
+	<p>Nothing to see here</p>
+}
+else
+{
+	<table class="table" style="width:200px">
+		<tbody>
+			@for (var z = 0; z < items.Count; z++)
+			{
+				@if (z % 3 == 0)
+				{
+					<tr>
+					</tr>
+				}
+			<td width="33%">
+				<a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">Movie Detail</a>
+			</td>
+			<td width="33%">@items[z].title</td>
+		}
+			</tbody>
+		</table>
+	}
+}
+
+@code {
+
+	private IList<Movie> items
+	{ get; set; }
+	protected override async Task OnInitializedAsync()
+	{
+		IList<Movie> unordered = await DataLayer.RequestAllItems();
+		items = unordered.ToList();
+	}
+
+}
