@@ -5,47 +5,63 @@
 
 <h2>View sorted Movies here</h2>
 
-<button class="btn btn-primary" @onclick="Update">Update List</button>
+<select class="custom-select" @onchange="Update" title="Select category">
+    <option value="Select" selected disabled="disabled">(Select category)</option>
+    @foreach (var strings in MyStringList)
+    {
+        <option value="@strings"> @strings</option>
+
+    }
+</select>
 
 @if (items == null || !items.Any())
 {
-	<p>Nothing to see here</p>
+    <p>Nothing to see here</p>
 }
 else
 {
-<table class="table" style="width:220px">
-	<tbody>
-		@for (var z = 0; z < items.Count; z++)
-		{
-			@if (z % 3 == 0)
-			{
-				<tr>
-				</tr>
-			}
-		<td width="10%">
-		<td width="10%">
-			<a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id"><img src="@items[z].GetPoster()" height="300" /></a>
-		</td>
-		@items[z].rating.rating/10 ★
-		</td>
-		<td width="10%"><a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">@items[z].title</a></td>
-	}
-		</tbody>
-	</table>
-	}
+    <table class="table" style="width:220px">
+        <tbody>
+            @for (var z = 0; z < items.Count; z++)
+            {
+                @if (z % 3 == 0)
+                {
+                    <tr>
+                    </tr>
+                }
+            <td>
+            <td>
+                <a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id"><img src="@items[z].GetPoster()" height="300" /></a>
+            </td>
+            @items[z].rating.rating/10 ★
+            <a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">@items[z].title</a>
+            </td>
+        }
+            </tbody>
+        </table>
+    }
 
 
 @code {
+    protected List<string> MyStringList = new List<string>() { "Top 50 Movies", "Bot 50 Movies", "Most 50 Voted Movies", "Least 50 Voted Movies" };
 
-	private IList<Movie> items
-	{ get; set; }
-	protected override async Task OnInitializedAsync()
-	{
-		items = await DataLayer.Top100("top");
-	}
+    protected string MyStringItem { get; set; }
 
-	private async Task Update()
-	{
-		items = await DataLayer.Top100("bot");
-	}
+
+    private IList<Movie> items
+    { get; set; }
+
+    int selectedValue { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        selectedValue = 1;
+        items = await DataLayer.Top100("top");
+    }
+
+    private async Task Update(ChangeEventArgs e)
+    {
+        var Value = e.Value.ToString();
+        items = await DataLayer.ProcessPlace(Value);
+    }
+
 }

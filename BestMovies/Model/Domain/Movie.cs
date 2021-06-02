@@ -22,7 +22,6 @@ namespace BestMovies.Model.Domain
         }
 
         public int id { get; set; }
-
         public string title { get; set; }
 
         public Director director { get; set; }
@@ -37,7 +36,7 @@ namespace BestMovies.Model.Domain
         public string GetPoster()
         {
             if (poster.Equals("N/A")){
-                return "https://cdn.discordapp.com/attachments/819280914319933510/849390722502885386/matrix_the_1999_3133_poster.png";
+                return "https://cdn.discordapp.com/attachments/813364585800400989/849661531079835678/Untitled.png";
             }
             return poster;
         }

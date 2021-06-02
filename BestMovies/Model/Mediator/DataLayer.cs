@@ -1,47 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
 using System.Net.Http;
-using System.Text.Json;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Authorization;
-using BestMovies.Pages;
 using BestMovies.Model.Domain;
 using System.Text;
 
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
-
-public interface IDataLayer
+namespace BestMovies.Pages
 {
-    Task<IList<Movie>> AllItems();
+    public interface IDataLayer
+{
     Task<IList<Movie>> RequestAllItems();
     Task<IList<Movie>> Top100(string place);
     Task<IList<Movie>> MostVoted(string place);
     Task<IList<Movie>> AllUserFavorites();
+    Task<IList<Movie>> ProcessPlace(string place);
     Task<Movie> ItemById(int id);
-    Task<Movie> ItemByName(string name);
-    
-
+    Task<IList<Movie>> ItemByName(string name);
+    Task StarByName(string name);
+        Model.Domain.Star GetStar();
 }
 
-namespace BestMovies.Pages
-{
     public class DataLayer : IDataLayer
-    { 
-        public IList<Movie> movies { get; set; }
+    {
+        public static Model.Domain.Star star { get; set; }
         public static DataLayer instance = null;
         private static readonly object padlock = new object();
         HttpClient client = new HttpClient();
@@ -68,7 +51,7 @@ namespace BestMovies.Pages
             }
         }
 
-        public IList<Movie> AllItems() => movies;
+   
 
         public async Task<IList<Movie>> RequestAllItems()
         {
@@ -113,18 +96,14 @@ namespace BestMovies.Pages
             return null;
         }
 
-        public async Task<Movie> ItemByName(string name)
+        public async Task<IList<Movie>> ItemByName(string name)
         {
             string jsonString= @"{""name"": """+name+ @"""}";
             HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             var uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/name/";
             var streamTask = client.PostAsync(uri, content);
             string result = await streamTask.Result.Content.ReadAsStringAsync();
-            Movie moviez = JsonConvert.DeserializeObject<Movie>(result);
-            uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getPoster?title=" + moviez.title;
-            streamTask = client.GetAsync(uri);
-            var stream = await streamTask.Result.Content.ReadAsStringAsync();
-            moviez.poster = stream;
+            IList<Movie> moviez = JsonConvert.DeserializeObject<IList<Movie>>(result);
             return moviez;
         }
 
@@ -145,10 +124,34 @@ namespace BestMovies.Pages
             return moviez;
         }
 
-        Task<IList<Movie>> IDataLayer.AllItems()
+        public Task<IList<Movie>> ProcessPlace(string place)
         {
-            throw new NotImplementedException();
+            switch (place)
+            {
+                case "Bot 50 Movies": return Top100("bot");
+                case "Most 50 Voted Movies": return MostVoted("most");
+                case "Least 50 Voted Movies": return Top100("less");
+                default : return Top100("top");
+            }
         }
 
+        public async Task StarByName(string name)
+        {
+            string jsonString = @"{""name"": """ + name + @"""}";
+            HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            string uri = "https://movies-app-310106.nw.r.appspot.com/api/person/name/";
+            var streamTask = client.PostAsync(uri, content);
+            string result = await streamTask.Result.Content.ReadAsStringAsync();
+            IList<Model.Domain.Star> stars = JsonConvert.DeserializeObject<IList<Model.Domain.Star>>(result);
+            Model.Domain.Star starss = new Model.Domain.Star(12,name);
+            star = starss;
+            star = stars[0];
+        }
+
+
+        Model.Domain.Star IDataLayer.GetStar()
+        {
+            return star;
+        }
     }
 }

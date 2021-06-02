@@ -12,15 +12,15 @@ namespace BestMovies.Model.Domain
             this.person_id = person_id;
             this.star_name = star_name;
         }
-
-        private int person_id {get; set;}
+        public int person_id {get; set;}
 
         public string star_name { get; set; }
-
+        public int birth { get; set; }
+        public float average_movie_rating { get; set; }
 
         public string GetStarName()
         {
-            if(star_name.Equals("Not in database"))
+            if(star_name==null || star_name.Equals("Not in database"))
             {
                 return "";
             }
