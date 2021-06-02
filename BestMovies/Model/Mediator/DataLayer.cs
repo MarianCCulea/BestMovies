@@ -82,7 +82,7 @@ namespace BestMovies.Pages
 
         public async Task<IList<Movie>> Top100(string place)
         {
-            string uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getTop100?place="+place;
+            string uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getTop100?place=" + place;
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
@@ -91,7 +91,7 @@ namespace BestMovies.Pages
 
         public async Task<IList<Movie>> MostVoted(string place)
         {
-            string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/" + place+ "-votes/";
+            string uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getMostVoted?place=" + place;
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             List<Movie> moviez = JsonConvert.DeserializeObject<List<Movie>>(stream);
@@ -117,9 +117,14 @@ namespace BestMovies.Pages
         {
             string jsonString= @"{""name"": """+name+ @"""}";
             HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            var streamTask = client.PostAsync("https://movies-app-310106.nw.r.appspot.com/api/movies/name/", content);
+            var uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/name/";
+            var streamTask = client.PostAsync(uri, content);
             string result = await streamTask.Result.Content.ReadAsStringAsync();
             Movie moviez = JsonConvert.DeserializeObject<Movie>(result);
+            uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getPoster?title=" + moviez.title;
+            streamTask = client.GetAsync(uri);
+            var stream = await streamTask.Result.Content.ReadAsStringAsync();
+            moviez.poster = stream;
             return moviez;
         }
 
@@ -129,10 +134,14 @@ namespace BestMovies.Pages
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             Movie moviez = JsonConvert.DeserializeObject<Movie>(stream);
-            uri = "https://europe-central2-functions-test-314508.cloudfunctions.net/getMoviePoster?title=" + moviez.title;
+            uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getPoster?title=" + moviez.title;
             streamTask = client.GetAsync(uri);
             stream = await streamTask.Result.Content.ReadAsStringAsync();
-            moviez.poster = stream;
+            moviez.poster = stream; 
+            uri = "https://europe-central2-movies-app-310106.cloudfunctions.net/getPlot?title=" + moviez.title;
+            streamTask = client.GetAsync(uri);
+            stream = await streamTask.Result.Content.ReadAsStringAsync();
+            moviez.plot = stream;
             return moviez;
         }
 
