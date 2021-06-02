@@ -49,8 +49,6 @@ namespace BestMovies.Pages
             }
         }
 
-   
-
         public async Task<IList<Movie>> RequestAllItems()
         {
             string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies";  //https://movies-app-310106.nw.r.appspot.com/api/movies
@@ -121,9 +119,11 @@ namespace BestMovies.Pages
             moviez.plot = stream;
             for(int i=0;i< moviez.stars.Count;i++)
             {
+                if (!moviez.stars[i].GetStarName().Equals("")) { 
                  Star newstar= StarByName(moviez.stars[i].star_name).Result;
                 moviez.stars[i].average_movie_rating = newstar.average_movie_rating;
                 moviez.stars[i].birth = newstar.birth;
+                }
             }
 
             return moviez;
@@ -148,11 +148,7 @@ namespace BestMovies.Pages
             var streamTask = client.PostAsync(uri, content);
             string result = await streamTask.Result.Content.ReadAsStringAsync();
             IList<Model.Domain.Star> stars = JsonConvert.DeserializeObject<IList<Model.Domain.Star>>(result);
-            try { return stars[0]; }
-            catch(Exception e)
-            {
-                return null;
-            }
+             return stars[0];
         }
     }
 }
