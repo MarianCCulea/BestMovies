@@ -148,8 +148,11 @@ namespace BestMovies.Pages
             var streamTask = client.PostAsync(uri, content);
             string result = await streamTask.Result.Content.ReadAsStringAsync();
             IList<Model.Domain.Star> stars = JsonConvert.DeserializeObject<IList<Model.Domain.Star>>(result);
-
-            return stars[0];
+            try { return stars[0]; }
+            catch(Exception e)
+            {
+                return null;
+            }
         }
     }
 }
