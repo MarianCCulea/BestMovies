@@ -15,17 +15,18 @@
     <tr>
         <th height="250">@item.GetPlot()<br /><br /><br /><br /><br />Directed by : @item.director.name </th>
     </tr>
-    <tr>
+
+        <tr>
         
         <th>
 			Starring:
             @foreach (var star in @item.stars)
             {
-        <p>@star.star_name</p>
-        <p>@star.average_movie_rating</p>
-        <p>@star.birth</p>
-        <br/>
-    
+                <td>
+        <p>Actor name: @star.star_name</p>
+        <p>Average movie rating: @star.average_movie_rating</p>
+        <p>Year of birth: @star.birth</p>
+                </td>
             } 
         </th>
             </tr>
@@ -51,7 +52,7 @@
 
     void BackToList()
     {
-        NavigationManager.NavigateTo("/movies");
+        NavigationManager.NavigateTo("/");
     }
 
     async Task AddToFavorites()
