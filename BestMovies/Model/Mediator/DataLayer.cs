@@ -18,13 +18,11 @@ namespace BestMovies.Pages
     Task<IList<Movie>> ProcessPlace(string place);
     Task<Movie> ItemById(int id);
     Task<IList<Movie>> ItemByName(string name);
-    Task StarByName(string name);
-        Model.Domain.Star GetStar();
+    Task<Star> StarByName(string name);
 }
 
     public class DataLayer : IDataLayer
     {
-        public static Model.Domain.Star star { get; set; }
         public static DataLayer instance = null;
         private static readonly object padlock = new object();
         HttpClient client = new HttpClient();
@@ -121,6 +119,13 @@ namespace BestMovies.Pages
             streamTask = client.GetAsync(uri);
             stream = await streamTask.Result.Content.ReadAsStringAsync();
             moviez.plot = stream;
+            for(int i=0;i< moviez.stars.Count;i++)
+            {
+                 Star newstar= StarByName(moviez.stars[i].star_name).Result;
+                moviez.stars[i].average_movie_rating = newstar.average_movie_rating;
+                moviez.stars[i].birth = newstar.birth;
+            }
+
             return moviez;
         }
 
@@ -135,7 +140,7 @@ namespace BestMovies.Pages
             }
         }
 
-        public async Task StarByName(string name)
+        public async Task<Star> StarByName(string name)
         {
             string jsonString = @"{""name"": """ + name + @"""}";
             HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -143,15 +148,8 @@ namespace BestMovies.Pages
             var streamTask = client.PostAsync(uri, content);
             string result = await streamTask.Result.Content.ReadAsStringAsync();
             IList<Model.Domain.Star> stars = JsonConvert.DeserializeObject<IList<Model.Domain.Star>>(result);
-            Model.Domain.Star starss = new Model.Domain.Star(12,name);
-            star = starss;
-            star = stars[0];
-        }
 
-
-        Model.Domain.Star IDataLayer.GetStar()
-        {
-            return star;
+            return stars[0];
         }
     }
 }

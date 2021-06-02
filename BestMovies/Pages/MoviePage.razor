@@ -21,9 +21,9 @@
 			Starring:
             @foreach (var star in @item.stars)
             {
-                var muie = star.star_name;
         <p>@star.star_name</p>
-        <button @onclick="() => SearchStar(muie)">See More</button>
+        <p>@star.average_movie_rating</p>
+        <p>@star.birth</p>
         <br/>
     
             } 
@@ -53,13 +53,6 @@
     {
         NavigationManager.NavigateTo("/movies");
     }
-
-    void SearchStar(string star)
-    {
-        DataLayer.StarByName(star);
-        NavigationManager.NavigateTo("/starpage/star");
-    }
-
 
     async Task AddToFavorites()
     {
