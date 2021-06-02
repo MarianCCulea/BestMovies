@@ -17,6 +17,15 @@ namespace BestMovies.Model.Domain
 
         public string star_name { get; set; }
 
+
+        public string GetStarName()
+        {
+            if(star_name.Equals("Not in database"))
+            {
+                return "";
+            }
+            return star_name;
+        }
         public override bool Equals(object obj)
         {
             return obj is Star star &&

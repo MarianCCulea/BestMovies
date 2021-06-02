@@ -76,6 +76,7 @@ namespace BestMovies.Pages
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             var moviex = JsonConvert.DeserializeObject<List<Movie>>(stream);
+            Console.WriteLine(moviex.Count +"-------------------count");
             return moviex;
         }
 
@@ -99,7 +100,17 @@ namespace BestMovies.Pages
 
         public async Task<IList<Movie>> AllUserFavorites()
         {
-            throw new NotImplementedException();
+            /*
+            string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/favorites/";
+            string jsonString = @"{ ""ids"":";
+            IList<int> milbei = new List<int> { 68646, 71562, 68202, 70951 };
+            var json = System.Text.Json.JsonSerializer.Serialize(milbei);
+            jsonString = jsonString + json + "}";
+            HttpContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var streamTask = client.PostAsync(uri, content);
+            string result = await streamTask.Result.Content.ReadAsStringAsync();
+            */
+            return null;
         }
 
         public async Task<Movie> ItemByName(string name)
