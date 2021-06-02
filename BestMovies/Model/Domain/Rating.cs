@@ -18,7 +18,7 @@ namespace BestMovies.Model.Domain
 
         public string rating { get; set; }
 
-        private int votes { get; set; }
+        public int votes { get; set; }
 
         public override bool Equals(object obj)
         {

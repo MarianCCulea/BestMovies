@@ -15,7 +15,7 @@ namespace BestMovies.Model.Domain
 
         private int person_id {get; set;}
 
-        private String star_name { get; set; }
+        public string star_name { get; set; }
 
         public override bool Equals(object obj)
         {
