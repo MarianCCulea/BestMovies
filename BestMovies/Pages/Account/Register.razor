@@ -1,0 +1,37 @@
+﻿@page "/register"
+@using BestMovies.Model.Domain
+@inject IJSRuntime JsRuntime
+@inject IDataLayer DataLayer
+@inject NavigationManager NavigationManager
+
+
+<EditForm Model="@user" OnValidSubmit="@SubmitRegister">
+    <DataAnnotationsValidator />
+    <p>
+        <div class="form-group">
+            <ValidationMessage For="@(()=>user.email)" />
+            <label for="email">Email: </label>
+            <InputText id="email" @bind-Value="user.email" />
+        </div>
+    </p>
+    <p>
+        <div class="form-group">
+            <ValidationMessage For="@(()=>user.password)" />
+            <label for="pass">Password: </label>
+            <InputText type="password" id="pass" @bind-Value="user.password" />
+        </div>
+    </p>
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@code{
+    private Userache user = new Userache();
+
+    private async Task SubmitRegister()
+    {
+        await DataLayer.SingUp(user);
+        NavigationManager.NavigateTo("/");
+    }
+
+}

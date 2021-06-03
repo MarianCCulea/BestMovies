@@ -2,6 +2,7 @@
 @using BestMovies.Model.Domain
 @using System.ComponentModel.DataAnnotations;
 @inject IDataLayer DataLayer
+@inject IJSRuntime jsRuntime
 
 <h2>View Movies here</h2>
 
@@ -10,6 +11,7 @@
            placeholder="Search by title (must contain at least 3 letters)" />
     <button type="button" class="btn btn-info" @onclick=SearchForMovie>Search</button>
     <br>
+    <h2>@error</h2>
 
     @if (items == null || !items.Any())
     {
@@ -29,18 +31,21 @@
                 <td width="55%">
                     @items[z].rating.rating/10 ★
                 </td>
-                <td width="33%"><a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">@items[z].title</a>
-            </td>
+                <td width="33%">
+                    <a href=@($"/movie/{items[z].id}") asp-route-id="@items[z].id">@items[z].title</a>
+                </td>
             }
                 </tbody>
             </table>
         }
+
 
 </div>
 @code {
 
     [StringLength(30, MinimumLength = 3, ErrorMessage = "Minimum 3 characters")]
     string SearchTerm { get; set; } = "";
+    string error { get; set; } = "";
 
     private IList<Movie> items
     { get; set; }
@@ -52,8 +57,15 @@
 
     async Task SearchForMovie()
     {
-        IList<Movie> searched = await DataLayer.ItemByName(SearchTerm);
-        items = searched.ToList();
+        try
+        {
+            IList<Movie> searched = await DataLayer.ItemByName(SearchTerm);
+            items = searched.ToList();
+        }
+        catch (Exception e)
+        {
+            error= "Bad Input";
+        }
     }
 
 }

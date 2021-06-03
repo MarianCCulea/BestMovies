@@ -6,10 +6,12 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using BestMovies.Model.Domain;
 using System.Text;
+using Firebase.Auth;
+using FireSharp.Interfaces;
+using FireSharp.Response;
+using FireSharp.Config;
 
-namespace BestMovies.Pages
-{
-    public interface IDataLayer
+public interface IDataLayer
 {
     Task<IList<Movie>> RequestAllItems();
     Task<IList<Movie>> Top100(string place);
@@ -19,11 +21,32 @@ namespace BestMovies.Pages
     Task<Movie> ItemById(int id);
     Task<IList<Movie>> ItemByName(string name);
     Task<Star> StarByName(string name);
-}
+    Task AddToFavorites(int movie);
+    Task SingUp(Userache user);
+    Task LogIn(Userache user);
+    void LogOut();
 
+}
+namespace BestMovies.Model.Mediator
+{
     public class DataLayer : IDataLayer
     {
         public static DataLayer instance = null;
+
+        
+
+        private static string API_KEY = "AIzaSyATzCZWVbqDwatzS_Z8Km-aCACjLTQKdwM";
+        private static FireAuthToken token;
+        private static string projectId;
+        private FireSharp.Config.FirebaseConfig config ;
+        FireSharp.FirebaseClient dbclient;
+
+        IFirebaseConfig configs = new FireSharp.Config.FirebaseConfig()
+        {
+            AuthSecret = "MpXqnz4AeGb9y7d7unISBPl1RbR4XxOGTtv5iNcC",
+            BasePath = "https://movies-app-310106-default-rtdb.europe-west1.firebasedatabase.app/"
+        };
+
         private static readonly object padlock = new object();
         HttpClient client = new HttpClient();
         public DataLayer()
@@ -32,6 +55,8 @@ namespace BestMovies.Pages
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
+
+            dbclient = new FireSharp.FirebaseClient(config);
         }
 
         public static DataLayer Instance
@@ -55,7 +80,6 @@ namespace BestMovies.Pages
             var streamTask = client.GetAsync(uri);
             var stream = await streamTask.Result.Content.ReadAsStringAsync();
             var moviex = JsonConvert.DeserializeObject<List<Movie>>(stream);
-            Console.WriteLine(moviex.Count +"-------------------count");
             return moviex;
         }
 
@@ -79,6 +103,10 @@ namespace BestMovies.Pages
 
         public async Task<IList<Movie>> AllUserFavorites()
         {
+
+            var result = dbclient.Get(token.localId+"/");
+            Console.WriteLine(result);
+
             /*
             string uri = "https://movies-app-310106.nw.r.appspot.com/api/movies/favorites/";
             string jsonString = @"{ ""ids"":";
@@ -150,5 +178,37 @@ namespace BestMovies.Pages
             IList<Model.Domain.Star> stars = JsonConvert.DeserializeObject<IList<Model.Domain.Star>>(result);
              return stars[0];
         }
+
+        public async Task LogIn(Userache user)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(user);
+            HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
+            string uri = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyATzCZWVbqDwatzS_Z8Km-aCACjLTQKdwM";
+            var streamTask = client.PostAsync(uri, content);
+            string result = await streamTask.Result.Content.ReadAsStringAsync();
+            var auth = new FirebaseAuthProvider(new Firebase.Auth.FirebaseConfig(API_KEY));
+            token = JsonConvert.DeserializeObject<FireAuthToken>(result);
+            Console.WriteLine(result);
+
+        }
+
+        public void LogOut()
+        {
+            token = null;
+        }
+
+        public async Task AddToFavorites(int movie)
+        {
+            SetResponse response = dbclient.Set(token.localId + "/", movie);
+        }
+
+        public async Task SingUp(Userache user)
+        {
+            var auth = new FirebaseAuthProvider(new Firebase.Auth.FirebaseConfig(API_KEY));
+            var a = await auth.CreateUserWithEmailAndPasswordAsync(user.email, user.password);
+            LogIn(user);
+
+        }
+
     }
 }

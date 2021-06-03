@@ -15,9 +15,7 @@
     <tr>
         <th height="250">@item.GetPlot()<br /><br /><br /><br /><br />Directed by : @item.director.name </th>
     </tr>
-
         <tr>
-        
         <th>
 			Starring:
             @foreach (var star in @item.stars)
@@ -34,8 +32,8 @@
 
 <button type="button" class="btn btn-danger" @onclick=BackToList>Back</button>
 <button type="button" class="btn btn-info" @onclick=AddToFavorites>Add to Favorites</button>
-<span id="resultJson">
-</span>
+<h3>verification
+</h3>
 
 
 @code {
@@ -43,6 +41,7 @@
     public int id { get; set; }
 
     Movie item { get; set; }
+    //string verification { get; set; } = "";
 
     protected override void OnInitialized()
     {
@@ -57,13 +56,8 @@
 
     async Task AddToFavorites()
     {
-        if (id > 0)
-        {
-            //DataLayer.add(item, itemcount);
-            await jsRuntime.InvokeVoidAsync("setElementTextById", "resultJson", "Added to the cart");
-        }
-        else
-            await jsRuntime.InvokeVoidAsync("setElementTextById", "resultJson", "At least 1 item must be added");
+        await DataLayer.AddToFavorites(id);
+        //verification="Added to Favorites";
     }
 
 }

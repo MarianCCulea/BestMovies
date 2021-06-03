@@ -1,0 +1,16 @@
+﻿@inject IDataLayer DataLayer
+@inject NavigationManager manager
+
+        <button href="favs" class="nav-link btn btn-link">Favorite</button>
+        <button @onclick="Logout" class="nav-link btn btn-link">Log out</button>
+
+        <a href="register">Register</a>
+        <a href="login">Login</a>
+
+@code {
+    public async Task Logout()
+    {
+        manager.NavigateTo("/");
+    }
+
+}

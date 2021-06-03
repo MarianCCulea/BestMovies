@@ -1,0 +1,28 @@
+﻿@page "/login"
+@using BestMovies.Model.Domain
+@inject IDataLayer DataLayer
+@inject NavigationManager NavigationManager
+
+<div class="form-group">
+    <label>User name:</label>
+    <input type="text" placeholder="user name" @bind-value="_username" />
+</div>
+<div class="form-group">
+    <label>Password</label>
+    <input type="password" placeholder="password" @bind-value="_password" />
+</div>
+
+<button class="btn btn-primary" @onclick="PerformLogin">Login</button>
+
+@code {
+
+    private string _username;
+    private string _password;
+
+    public async Task PerformLogin()
+    {
+        DataLayer.LogIn(new Userache(_username, _password));
+        NavigationManager.NavigateTo("/");
+    }
+
+}
